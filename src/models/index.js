@@ -1,9 +1,7 @@
 import { Sequelize } from 'sequelize';
 import fs from 'fs';
 const { postgres } = typeof process.env.service === 'string' ? JSON.parse(process.env.service) : process.env.service;
-
-import { BookSchema } from './schema.js';
-
+import { UserSchema } from './schema.js';
 const cCA = fs.readFileSync('./certs/ca-certificate.crt', 'utf8');
 const sequelize = new Sequelize(postgres.dbName, postgres.options.user, postgres.options.pass, {
   host: postgres.ip,
@@ -27,6 +25,6 @@ try {
   console.error('Unable to connect to the database:', error);
 }
 
-const Book = sequelize.define('books', BookSchema);
+const User = sequelize.define('users', UserSchema, { timestamps: false, freezeTableName: true });
 
-export { Book, sequelize };
+export { User, sequelize };

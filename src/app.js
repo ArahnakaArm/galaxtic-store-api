@@ -1,7 +1,7 @@
 import express from 'express';
 import { sequelize } from './models/index.js';
 const app = express();
-import BookRoute from './routes/bookRoute.js';
+import UserRoute from './routes/userRoute.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
@@ -19,6 +19,6 @@ sequelize
     console.error('Unable to Sync table : ', error);
   });
 
-app.use(apiGroupPrefix, BookRoute);
+app.use(apiGroupPrefix, UserRoute);
 
 export { app };
