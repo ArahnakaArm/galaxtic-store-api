@@ -1,0 +1,35 @@
+{
+    "apps": [
+        {
+            "exec_mode": "fork",
+            "name": "galaxtic-store-api",
+            "instances": 1,
+            "script": "index.js",
+            "interpreter": "node",
+            "watch": [
+                "src",
+                "conf",
+                "models"
+            ],
+            "env": {
+                "server": {
+                    "app_port": "3000",
+                    "app_host": "0.0.0.0"
+                },
+                "service": {
+                    "postgres": {
+                        "ip": "db-postgresql-sgp1-62414-do-user-10629263-0.b.db.ondigitalocean.com",
+                        "port": "25060",
+                        "dbName": "galaxtic-store",
+                        "options": {
+                            "user": "doadmin",
+                            "pass": "AVNS_7I8TqT9zgiSSIM1SleL",
+                            "logging": false
+                        },
+                        "schema": "galaxtic-store"
+                    }
+                }
+            }
+        }
+    ]
+}
