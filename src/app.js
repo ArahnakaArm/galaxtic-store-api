@@ -11,13 +11,13 @@ app.use(bodyParser.json());
 app.use(cors());
 
 sequelize
-  .sync()
-  .then(() => {
-    console.log('Sync table  successfully!');
-  })
-  .catch((error) => {
-    console.error('Unable to Sync table : ', error);
-  });
+    .sync()
+    .then(() => {
+        console.log('Sync table  successfully!');
+    })
+    .catch((error) => {
+        console.error('Unable to Sync table : ', error);
+    });
 
 app.use(apiGroupPrefix, UserRoute);
 
