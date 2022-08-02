@@ -32,9 +32,13 @@ const UserSchema = {
         type: DataTypes.STRING,
         allowNull: true,
     },
-    verify_at: {
+    verify_code_password: {
         type: DataTypes.STRING,
         allowNull: true,
+    },
+    verify_at: {
+        type: DataTypes.DATE,
+        defaultValue: null,
     },
     created_at: {
         type: DataTypes.DATE,

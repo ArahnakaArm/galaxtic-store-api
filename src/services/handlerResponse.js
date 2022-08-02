@@ -9,6 +9,7 @@ const {
     WRONG_PASSWORD,
     UNAUTHORIZED,
     MISSING_OR_INVALID_PARAMETER,
+    EMAIL_NOT_VERIFY,
 } = status;
 
 const returnSuccess = (res, payload = null) => {
@@ -83,6 +84,15 @@ const returnInvalid = (res, payload = null) => {
     return res.status(Number(MISSING_OR_INVALID_PARAMETER.RESULT_CODE.substring(0, 3))).send(resMess);
 };
 
+const returnEmailNotVerify = (res, payload = null) => {
+    const resMess = {
+        resultCode: EMAIL_NOT_VERIFY.RESULT_CODE,
+        developerMessage: EMAIL_NOT_VERIFY.DEVELOPER_MESSAGE,
+    };
+    if (payload) resMess.resultData = payload;
+    return res.status(Number(EMAIL_NOT_VERIFY.RESULT_CODE.substring(0, 3))).send(resMess);
+};
+
 export {
     returnSuccess,
     returnCreated,
@@ -92,4 +102,5 @@ export {
     returnWrongPass,
     returnUnauthorized,
     returnInvalid,
+    returnEmailNotVerify,
 };

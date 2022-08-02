@@ -27,6 +27,12 @@
                             "logging": false
                         },
                         "schema": "galaxtic-store"
+                    },
+                    "email": {
+                        "email": "galaxticstoreverifymail@gmail.com",
+                        "password": "kgysdedvxclfbpfr",
+                        "verifyUrl": "http://localhost:3000/user/verify-email",
+                        "changePassUrl": "http://localhost:3000/user/change-password-verify"
                     }
                 }
             }

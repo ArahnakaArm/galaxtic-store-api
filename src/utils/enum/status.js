@@ -31,6 +31,10 @@ const status = {
         RESULT_CODE: '40000',
         DEVELOPER_MESSAGE: 'Missing or invalid parameter',
     },
+    EMAIL_NOT_VERIFY: {
+        RESULT_CODE: '40102',
+        DEVELOPER_MESSAGE: 'User is not verified',
+    },
 };
 
 export default Object.freeze(status);

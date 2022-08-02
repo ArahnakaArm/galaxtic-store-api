@@ -18,4 +18,14 @@ const matchPassword = async (password, comPassword) => {
     return isMatch;
 };
 
-export { generateUuid, hashPassword, matchPassword };
+const generateRandomString = (digit) => {
+    const charSet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let randomString = '';
+    for (let i = 0; i < digit; i++) {
+        const randomPoz = Math.floor(Math.random() * charSet.length);
+        randomString += charSet.substring(randomPoz, randomPoz + 1);
+    }
+    return randomString;
+};
+
+export { generateUuid, hashPassword, matchPassword, generateRandomString };

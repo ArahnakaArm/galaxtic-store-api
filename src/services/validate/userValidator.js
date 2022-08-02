@@ -15,7 +15,7 @@ ajv.addKeyword('emptyChecker', {
 const registerValidate = (req, res, next) => {
     const schema = {
         type: 'object',
-        required: ['email', 'user_role', 'first_name', 'last_name'],
+        required: ['email', 'user_role', 'password', 'first_name', 'last_name'],
         additionalProperties: false,
         properties: {
             email: {
@@ -49,4 +49,104 @@ const registerValidate = (req, res, next) => {
     }
 };
 
-export { registerValidate };
+const loginValidate = (req, res, next) => {
+    const schema = {
+        type: 'object',
+        required: ['email', 'password'],
+        additionalProperties: false,
+        properties: {
+            email: {
+                emptyChecker: true,
+                type: 'string',
+                format: 'email',
+            },
+            password: {
+                emptyChecker: true,
+                type: 'string',
+            },
+        },
+    };
+
+    const validateBody = ajv.validate(schema, req.body);
+    if (validateBody) {
+        next();
+    } else {
+        returnInvalid(res);
+    }
+};
+
+const verifyEmailValidate = (req, res, next) => {
+    const schema = {
+        type: 'object',
+        required: ['verify_code'],
+        additionalProperties: false,
+        properties: {
+            verify_code: {
+                emptyChecker: true,
+                type: 'string',
+            },
+        },
+    };
+
+    const validateBody = ajv.validate(schema, req.body);
+    if (validateBody) {
+        next();
+    } else {
+        returnInvalid(res);
+    }
+};
+
+const forgotPasswordValidate = (req, res, next) => {
+    const schema = {
+        type: 'object',
+        required: ['email'],
+        additionalProperties: false,
+        properties: {
+            email: {
+                emptyChecker: true,
+                type: 'string',
+                format: 'email',
+            },
+        },
+    };
+
+    const validateBody = ajv.validate(schema, req.body);
+    if (validateBody) {
+        next();
+    } else {
+        returnInvalid(res);
+    }
+};
+
+const changePasswordWithVerifyCodeValidate = (req, res, next) => {
+    const schema = {
+        type: 'object',
+        required: ['password', 'verify_code_password'],
+        additionalProperties: false,
+        properties: {
+            password: {
+                emptyChecker: true,
+                type: 'string',
+            },
+            verify_code_password: {
+                emptyChecker: true,
+                type: 'string',
+            },
+        },
+    };
+
+    const validateBody = ajv.validate(schema, req.body);
+    if (validateBody) {
+        next();
+    } else {
+        returnInvalid(res);
+    }
+};
+
+export {
+    registerValidate,
+    loginValidate,
+    verifyEmailValidate,
+    forgotPasswordValidate,
+    changePasswordWithVerifyCodeValidate,
+};

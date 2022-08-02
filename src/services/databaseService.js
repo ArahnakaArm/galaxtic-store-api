@@ -11,7 +11,7 @@ const regisUser = async (payload = null) => {
 
 const findUser = async (payload = null, additionalProp = null) => {
     try {
-        let itemAtts = ['email', 'user_id', 'user_role', 'first_name', 'last_name', 'is_active'];
+        let itemAtts = ['user_id', 'email', 'user_role', 'first_name', 'last_name', 'is_active'];
         if (additionalProp) itemAtts = [...itemAtts, ...additionalProp];
 
         const user = await User.findOne({
@@ -25,4 +25,16 @@ const findUser = async (payload = null, additionalProp = null) => {
     }
 };
 
-export { regisUser, findUser };
+const commonUpdate = async (obj, payload) => {
+    try {
+        const now = new Date();
+        const updateObj = { ...payload, updated_at: now };
+        obj.set(updateObj);
+        await obj.save();
+        return obj;
+    } catch (e) {
+        return null;
+    }
+};
+
+export { regisUser, findUser, commonUpdate };
