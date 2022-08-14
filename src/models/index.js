@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize';
 import fs from 'fs';
 const { postgres } = typeof process.env.service === 'string' ? JSON.parse(process.env.service) : process.env.service;
-import { UserSchema, MonthlyPromotionSchema, MonthlyPromotionContentSchema } from './schema.js';
+import { UserSchema, MonthlyPromotionSchema, MonthlyPromotionContentSchema, ShopSchema } from './schema.js';
 const cCA = fs.readFileSync('./certs/ca-certificate.crt', 'utf8');
 const sequelize = new Sequelize(postgres.dbName, postgres.options.user, postgres.options.pass, {
     host: postgres.ip,
@@ -35,6 +35,8 @@ const commonModelOptions = {
 };
 
 const User = sequelize.define('users', UserSchema, commonModelOptions);
+const Shop = sequelize.define('shops', ShopSchema, commonModelOptions);
+
 const MonthlyPromotion = sequelize.define('monthly_promotions', MonthlyPromotionSchema, commonModelOptions);
 const MonthlyPromotionContent = sequelize.define(
     'monthly_promotion_contents',
@@ -42,10 +44,21 @@ const MonthlyPromotionContent = sequelize.define(
     commonModelOptions,
 );
 
+User.belongsToMany(Shop, {
+    through: 'users_shops',
+    foreignKey: 'user_id',
+    otherKey: 'shop_id',
+});
+Shop.belongsToMany(User, {
+    through: 'users_shops',
+    foreignKey: 'shop_id',
+    otherKey: 'user_id',
+});
+
 MonthlyPromotion.hasMany(MonthlyPromotionContent, {
     onDelete: 'CASCADE',
     hooks: true,
     foreignKey: 'monthly_promotion_id',
 });
 
-export { User, MonthlyPromotion, MonthlyPromotionContent, sequelize };
+export { User, Shop, MonthlyPromotion, MonthlyPromotionContent, sequelize };

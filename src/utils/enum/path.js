@@ -10,6 +10,7 @@ const path = {
     },
     PROMOTION: {
         MONTHLY_PROMOTION: '/monthly-promotion',
+        DELETE_MONTHLY_PROMOTION: '/monthly-promotion/:monthlyPromotionId',
     },
 };
 

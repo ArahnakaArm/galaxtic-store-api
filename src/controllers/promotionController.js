@@ -1,6 +1,15 @@
-import { MonthlyPromotion } from '../models/index.js';
-import { commonPost, createMonthlyPromotion, removeMonthlyPromotion } from '../services/databaseService.js';
+import { getMonthlyPromotion, createMonthlyPromotion, removeMonthlyPromotion } from '../services/databaseService.js';
 import { returnCreated, returnNotfound, returnSuccess, returnSystemError } from '../services/handlerResponse.js';
+
+const getAllMonthlyPromotion = async (req, res) => {
+    const dbObj = await getMonthlyPromotion();
+
+    if (dbObj.dbStatus === 'error') {
+        return returnSystemError(res);
+    }
+
+    return returnSuccess(res, dbObj.data);
+};
 
 const postMonthlyPromotion = async (req, res) => {
     const body = req.body;
@@ -14,8 +23,8 @@ const postMonthlyPromotion = async (req, res) => {
 };
 
 const deleteMonthlyPromotion = async (req, res) => {
-    const body = req.body;
-    const monthlyPromotionId = body.monthly_promotion_id || '';
+    const monthlyPromotionId = req.params.monthlyPromotionId || '';
+
     const dbObj = await removeMonthlyPromotion(monthlyPromotionId);
 
     if (dbObj.dbStatus === 'not found') {
@@ -25,4 +34,4 @@ const deleteMonthlyPromotion = async (req, res) => {
     return returnSuccess(res);
 };
 
-export { postMonthlyPromotion, deleteMonthlyPromotion };
+export { getAllMonthlyPromotion, postMonthlyPromotion, deleteMonthlyPromotion };

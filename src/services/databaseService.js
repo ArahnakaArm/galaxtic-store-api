@@ -1,4 +1,4 @@
-import { User } from '../models/index.js';
+import { User, Shop } from '../models/index.js';
 import { generateUuid } from '../services/basicFunc.js';
 import { MonthlyPromotion, MonthlyPromotionContent, sequelize } from '../models/index.js';
 
@@ -17,6 +17,7 @@ const findUser = async (payload = null, additionalProp = null) => {
         if (additionalProp) itemAtts = [...itemAtts, ...additionalProp];
 
         const user = await User.findOne({
+            include: Shop,
             where: payload,
             attributes: itemAtts,
         });
@@ -49,6 +50,23 @@ const commonPost = async (obj, payload) => {
     } catch (e) {
         console.log(e);
         return null;
+    }
+};
+
+const getMonthlyPromotion = async () => {
+    try {
+        const monthlyPromotions = await MonthlyPromotion.findAll({
+            include: { model: MonthlyPromotionContent, as: 'monthly_promotion_contents' },
+        });
+        return {
+            dbStatus: 'success',
+            data: monthlyPromotions,
+        };
+    } catch (e) {
+        return {
+            dbStatus: 'error',
+            data: null,
+        };
     }
 };
 
@@ -107,4 +125,12 @@ const removeMonthlyPromotion = async (id) => {
     }
 };
 
-export { regisUser, findUser, commonUpdate, commonPost, createMonthlyPromotion, removeMonthlyPromotion };
+export {
+    regisUser,
+    findUser,
+    commonUpdate,
+    commonPost,
+    getMonthlyPromotion,
+    createMonthlyPromotion,
+    removeMonthlyPromotion,
+};

@@ -54,6 +54,29 @@ const UserSchema = {
     },
 };
 
+const ShopSchema = {
+    shop_id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    shop_name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: NOW,
+    },
+    updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: NOW,
+    },
+    deleted_at: {
+        type: DataTypes.DATE,
+        defaultValue: null,
+    },
+};
+
 const MonthlyPromotionSchema = {
     monthly_promotion_id: {
         type: DataTypes.STRING,
@@ -108,4 +131,4 @@ const MonthlyPromotionContentSchema = {
     },
 };
 
-export { UserSchema, MonthlyPromotionSchema, MonthlyPromotionContentSchema };
+export { UserSchema, ShopSchema, MonthlyPromotionSchema, MonthlyPromotionContentSchema };
