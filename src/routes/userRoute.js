@@ -8,7 +8,7 @@ import {
     forgotPassword,
     changePasswordWithVerifyCode,
 } from '../controllers/userController.js';
-import { auth } from '../services/middleware/auth.js';
+import { auth, adminRoleValidate, userRoleValidate } from '../services/middleware/auth.js';
 import {
     registerValidate,
     loginValidate,
@@ -25,7 +25,7 @@ UserRoute.get(USER.GET_USER, [auth], getUsers);
 UserRoute.post(USER.REGISTER, [registerValidate], register);
 UserRoute.post(USER.LOGIN, [loginValidate], login);
 UserRoute.post(USER.VERIFY_EMAIL, [verifyEmailValidate], verifyEmail);
-UserRoute.get(USER.PROFILE, [auth], profile);
+UserRoute.get(USER.PROFILE, [auth, userRoleValidate], profile);
 UserRoute.post(USER.FORGOT_PASSWORD, [forgotPasswordValidate], forgotPassword);
 UserRoute.patch(
     USER.CHANGE_PASSWORD_WITH_VERIFYCODE,

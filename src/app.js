@@ -2,6 +2,7 @@ import express from 'express';
 import { sequelize } from './models/index.js';
 const app = express();
 import UserRoute from './routes/userRoute.js';
+import PromotionRoute from './routes/promotionRoute.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
@@ -20,5 +21,6 @@ sequelize
     });
 
 app.use(apiGroupPrefix, UserRoute);
+app.use(apiGroupPrefix, PromotionRoute);
 
 export { app };

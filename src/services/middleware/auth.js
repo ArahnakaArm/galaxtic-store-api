@@ -20,4 +20,36 @@ const auth = async (req, res, next) => {
     next();
 };
 
-export { auth };
+const adminRoleValidate = async (req, res, next) => {
+    try {
+        const headers = req.headers;
+        const token = headers.authorization.split('Bearer ')[1];
+
+        const decoded = jwt.verify(token, JWT_SECRET);
+
+        const user = await findUser({ user_id: decoded.user_id, deleted_at: null });
+        if (user.user_role !== 'ADMIN') return returnUnauthorized(res);
+    } catch (err) {
+        return returnUnauthorized(res);
+    }
+
+    next();
+};
+
+const userRoleValidate = async (req, res, next) => {
+    try {
+        const headers = req.headers;
+        const token = headers.authorization.split('Bearer ')[1];
+
+        const decoded = jwt.verify(token, JWT_SECRET);
+
+        const user = await findUser({ user_id: decoded.user_id, deleted_at: null });
+        if (user.user_role !== 'USER' && user.user_role !== 'ADMIN') return returnUnauthorized(res);
+    } catch (err) {
+        return returnUnauthorized(res);
+    }
+
+    next();
+};
+
+export { auth, adminRoleValidate, userRoleValidate };

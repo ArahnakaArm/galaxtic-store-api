@@ -54,4 +54,58 @@ const UserSchema = {
     },
 };
 
-export { UserSchema };
+const MonthlyPromotionSchema = {
+    monthly_promotion_id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    imgae_url: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    url: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: NOW,
+    },
+    updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: NOW,
+    },
+    deleted_at: {
+        type: DataTypes.DATE,
+        defaultValue: null,
+    },
+};
+
+const MonthlyPromotionContentSchema = {
+    monthly_promotion_content_id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    monthly_promotion_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    image_url: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: NOW,
+    },
+    updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: NOW,
+    },
+    deleted_at: {
+        type: DataTypes.DATE,
+        defaultValue: null,
+    },
+};
+
+export { UserSchema, MonthlyPromotionSchema, MonthlyPromotionContentSchema };

@@ -8,6 +8,9 @@ const path = {
         FORGOT_PASSWORD: '/forgot-password',
         CHANGE_PASSWORD_WITH_VERIFYCODE: '/change-password-verify',
     },
+    PROMOTION: {
+        MONTHLY_PROMOTION: '/monthly-promotion',
+    },
 };
 
 export default Object.freeze(path);
