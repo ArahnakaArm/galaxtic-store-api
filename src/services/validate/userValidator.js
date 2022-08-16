@@ -4,7 +4,8 @@ import addFormats from 'ajv-formats';
 import { returnInvalid } from '../../services/handlerResponse.js';
 addFormats(ajv);
 
-ajv.addKeyword('emptyChecker', {
+ajv.addKeyword({
+    keyword: 'emptyChecker',
     modifying: false,
     schema: false, // keywords value is not used, can be true
     validate: function (data, dataPath, parentData, parentDataProperty) {

@@ -14,42 +14,24 @@ ajv.addKeyword({
     },
 });
 
-const postMonthlyPromotionValidate = (req, res, next) => {
+const postShippingInfoByMeValidate = (req, res, next) => {
     const schema = {
         type: 'object',
-        required: [...authExtend, 'imgae_url', 'url', 'contents'],
+        required: [...authExtend, 'shipping_address', 'tel_number'],
         additionalProperties: false,
         properties: {
             user_id: {
                 emptyChecker: true,
                 type: 'string',
             },
-            imgae_url: {
+            shipping_address: {
                 emptyChecker: true,
                 type: 'string',
             },
-            url: {
+            tel_number: {
                 emptyChecker: true,
                 type: 'string',
-            },
-            contents: {
-                emptyChecker: true,
-                type: 'array',
-                items: {
-                    type: 'object',
-                    required: ['image_url', 'url'],
-                    additionalProperties: false,
-                    properties: {
-                        image_url: {
-                            emptyChecker: true,
-                            type: 'string',
-                        },
-                        url: {
-                            emptyChecker: true,
-                            type: 'string',
-                        },
-                    },
-                },
+                pattern: '^[0][0-9]{9}$',
             },
         },
     };
@@ -62,4 +44,4 @@ const postMonthlyPromotionValidate = (req, res, next) => {
     }
 };
 
-export { postMonthlyPromotionValidate };
+export { postShippingInfoByMeValidate };

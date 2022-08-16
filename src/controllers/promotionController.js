@@ -1,11 +1,28 @@
-import { getMonthlyPromotion, createMonthlyPromotion, removeMonthlyPromotion } from '../services/databaseService.js';
+import {
+    getMonthlyPromotion,
+    getMonthlyPromotionById,
+    createMonthlyPromotion,
+    removeMonthlyPromotion,
+} from '../services/databaseServices/promotionDatabaseService.js';
 import { returnCreated, returnNotfound, returnSuccess, returnSystemError } from '../services/handlerResponse.js';
 
 const getAllMonthlyPromotion = async (req, res) => {
     const dbObj = await getMonthlyPromotion();
 
-    if (dbObj.dbStatus === 'error') {
+    if (dbObj.dbStatus === 'Error') {
         return returnSystemError(res);
+    }
+
+    return returnSuccess(res, dbObj.data);
+};
+
+const getByIdMonthlyPromotion = async (req, res) => {
+    const monthlyPromotionId = req.params.monthlyPromotionId || '';
+
+    const dbObj = await getMonthlyPromotionById(monthlyPromotionId);
+
+    if (dbObj.dbStatus === 'Not Found') {
+        return returnNotfound(res);
     }
 
     return returnSuccess(res, dbObj.data);
@@ -13,13 +30,13 @@ const getAllMonthlyPromotion = async (req, res) => {
 
 const postMonthlyPromotion = async (req, res) => {
     const body = req.body;
-    const promotion = await createMonthlyPromotion(body);
+    const dbObj = await createMonthlyPromotion(body);
 
-    if (!promotion) {
+    if (dbObj.dbStatus === 'Error') {
         return returnSystemError(res);
     }
 
-    return returnCreated(res, promotion);
+    return returnCreated(res, dbObj.data);
 };
 
 const deleteMonthlyPromotion = async (req, res) => {
@@ -27,11 +44,11 @@ const deleteMonthlyPromotion = async (req, res) => {
 
     const dbObj = await removeMonthlyPromotion(monthlyPromotionId);
 
-    if (dbObj.dbStatus === 'not found') {
+    if (dbObj.dbStatus === 'Not Found') {
         return returnNotfound(res);
     }
 
     return returnSuccess(res);
 };
 
-export { getAllMonthlyPromotion, postMonthlyPromotion, deleteMonthlyPromotion };
+export { getAllMonthlyPromotion, getByIdMonthlyPromotion, postMonthlyPromotion, deleteMonthlyPromotion };

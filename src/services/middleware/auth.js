@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import configApp from '../../../conf/config-app.js';
-import { regisUser, findUser } from '../../services/databaseService.js';
+import { regisUser, findUser } from '../databaseServices/userDatabaseService.js';
 import { returnUnauthorized } from '../handlerResponse.js';
 const { JWT_EXPIRE, JWT_SECRET } = configApp;
 

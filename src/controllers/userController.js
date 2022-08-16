@@ -8,7 +8,7 @@ import {
     returnWrongPass,
     returnEmailNotVerify,
 } from '../services/handlerResponse.js';
-import { regisUser, findUser, commonUpdate } from '../services/databaseService.js';
+import { regisUser, findUser, commonUpdate } from '../services/databaseServices/userDatabaseService.js';
 import { generateUuid, hashPassword, matchPassword, generateRandomString } from '../services/basicFunc.js';
 import jwt from 'jsonwebtoken';
 import configApp from '../../conf/config-app.js';

@@ -1,6 +1,7 @@
 import express from 'express';
 import {
     getAllMonthlyPromotion,
+    getByIdMonthlyPromotion,
     postMonthlyPromotion,
     deleteMonthlyPromotion,
 } from '../controllers/promotionController.js';
@@ -14,6 +15,7 @@ const { PROMOTION } = path;
 const prefix = '/promotion';
 
 PromotionRoute.get(prefix + PROMOTION.MONTHLY_PROMOTION, [], getAllMonthlyPromotion);
+PromotionRoute.get(prefix + PROMOTION.MONTHLY_PROMOTION_BY_ID, [], getByIdMonthlyPromotion);
 PromotionRoute.post(
     prefix + PROMOTION.MONTHLY_PROMOTION,
     [auth, userRoleValidate, postMonthlyPromotionValidate],
