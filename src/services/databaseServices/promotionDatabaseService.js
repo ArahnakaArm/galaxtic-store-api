@@ -64,7 +64,7 @@ const createMonthlyPromotion = async (payload) => {
 
         await t.commit();
 
-        return dbSuccess(postMonthlyPromotion);
+        return dbCreated(postMonthlyPromotion);
     } catch (e) {
         console.log(e);
         await t.rollback();

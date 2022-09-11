@@ -8,11 +8,18 @@ import {
     returnWrongPass,
     returnEmailNotVerify,
 } from '../services/handlerResponse.js';
-import { regisUser, findUser, commonUpdate } from '../services/databaseServices/userDatabaseService.js';
+import {
+    regisUser,
+    findUser,
+    commonUpdate,
+    createUserProfile,
+    updateUserProfile,
+} from '../services/databaseServices/userDatabaseService.js';
 import { generateUuid, hashPassword, matchPassword, generateRandomString } from '../services/basicFunc.js';
 import jwt from 'jsonwebtoken';
 import configApp from '../../conf/config-app.js';
 import { sendEmail, sendEmailChangePass } from '../services/sendEmail.js';
+import dbStatus from '../utils/enum/dbStatus.js';
 const { JWT_EXPIRE, JWT_SECRET } = configApp;
 
 const getUsers = async (req, res) => {
@@ -160,4 +167,42 @@ const changePasswordWithVerifyCode = async (req, res) => {
     return returnSuccess(res, updatedUser);
 };
 
-export { getUsers, register, login, profile, verifyEmail, forgotPassword, changePasswordWithVerifyCode };
+const createProfile = async (req, res) => {
+    const { body } = req;
+    const dbObj = await createUserProfile(body);
+    switch (dbObj.dbStatus) {
+        case dbStatus.NOT_FOUND:
+            return returnNotfound(res);
+        case dbStatus.CONFLICT:
+            return returnConflict(res);
+        case dbStatus.SYS_ERROR:
+            return returnSystemError(res);
+    }
+    return returnCreated(res, dbObj.data);
+};
+
+const updateProfile = async (req, res) => {
+    const { body } = req;
+    const dbObj = await updateUserProfile(body);
+    switch (dbObj.dbStatus) {
+        case dbStatus.NOT_FOUND:
+            return returnNotfound(res);
+        case dbStatus.CONFLICT:
+            return returnConflict(res);
+        case dbStatus.SYS_ERROR:
+            return returnSystemError(res);
+    }
+    return returnSuccess(res, dbObj.data);
+};
+
+export {
+    getUsers,
+    register,
+    login,
+    profile,
+    verifyEmail,
+    forgotPassword,
+    changePasswordWithVerifyCode,
+    createProfile,
+    updateProfile,
+};

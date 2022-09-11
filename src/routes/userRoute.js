@@ -7,6 +7,8 @@ import {
     verifyEmail,
     forgotPassword,
     changePasswordWithVerifyCode,
+    createProfile,
+    updateProfile,
 } from '../controllers/userController.js';
 import { auth, adminRoleValidate, userRoleValidate } from '../services/middleware/auth.js';
 import {
@@ -32,5 +34,6 @@ UserRoute.patch(
     [changePasswordWithVerifyCodeValidate],
     changePasswordWithVerifyCode,
 );
-
+UserRoute.post(USER.PROFILE, [auth, userRoleValidate], createProfile);
+UserRoute.patch(USER.PROFILE, [auth, userRoleValidate], updateProfile);
 export default UserRoute;

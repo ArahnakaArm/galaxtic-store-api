@@ -1,4 +1,6 @@
-import { User, UserInfo, ShippingInfo, Shop } from '../../models/index.js';
+import { User, UserInfo, ShippingInfo, Shop, sequelize } from '../../models/index.js';
+import { dbConflict, dbCreated, dbNotFound, dbSuccess, dbSysError } from '../handlerDatabaseServiceResponse.js';
+import { generateUuid } from '../basicFunc.js';
 
 const regisUser = async (payload = null) => {
     try {
@@ -46,9 +48,72 @@ const commonPost = async (obj, payload) => {
 
         return postObj;
     } catch (e) {
-        console.log(e);
         return null;
     }
 };
 
-export { regisUser, findUser, commonUpdate, commonPost };
+const createUserProfile = async (payload) => {
+    try {
+        const userId = payload.user_id;
+        const user = await User.findOne({
+            where: {
+                user_id: userId,
+            },
+        });
+
+        if (!user) {
+            return dbNotFound();
+        }
+
+        const userProfileCount = await UserInfo.count({
+            where: {
+                user_id: userId,
+            },
+        });
+        if (userProfileCount) {
+            return dbConflict();
+        }
+
+        const userInfoId = generateUuid();
+
+        const userProfile = await UserInfo.create({
+            user_info_id: userInfoId,
+            user_id: userId,
+            first_name: user.first_name || '',
+            last_name: user.last_name || '',
+            email: user.email || '',
+        });
+        return dbCreated(userProfile);
+    } catch (e) {
+        console.log(e);
+        return dbSysError();
+    }
+};
+
+const updateUserProfile = async (payload) => {
+    try {
+        const userId = payload.user_id;
+        const userInfo = await UserInfo.findOne({
+            where: {
+                user_id: userId,
+            },
+        });
+        if (!userInfo) return dbNotFound();
+
+        userInfo.set({
+            first_name: payload.first_name || '',
+            last_name: payload.last_name || '',
+            tel_number: payload.tel_number || null,
+            address: payload.address || null,
+            profile_image: payload.profile_image ? payload.profile_image : null,
+        });
+
+        await userInfo.save();
+
+        return dbSuccess(userInfo);
+    } catch (e) {
+        return dbSysError();
+    }
+};
+
+export { regisUser, findUser, commonUpdate, commonPost, createUserProfile, updateUserProfile };

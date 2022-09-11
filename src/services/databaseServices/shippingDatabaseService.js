@@ -90,7 +90,6 @@ const patchUpdateShippingInfoByme = async (id, userId, payload) => {
 const removeShippingInfoByme = async (id) => {
     try {
         await ShippingInfo.destroy({ where: { shipping_info_id: id } });
-
         return dbSuccess();
     } catch (e) {
         return dbSysError();

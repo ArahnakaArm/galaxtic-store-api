@@ -17,6 +17,11 @@ const path = {
         SHIPPING_INFO: '/shipping-info',
         SHIPPING_INFO_UPDATE: '/shipping-info/:shippingInfoId',
     },
+    SHOP: {
+        ADD_SHOP: '/shop',
+        UPDATE_SHOP: '/shop/:shopId',
+        DELETE_SHOP: '/shop/:shopId',
+    },
 };
 
 export default Object.freeze(path);

@@ -73,7 +73,6 @@ const UserInfoSchema = {
     },
     tel_number: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     address: {
         type: DataTypes.STRING,

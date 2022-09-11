@@ -4,6 +4,7 @@ const app = express();
 import UserRoute from './routes/userRoute.js';
 import PromotionRoute from './routes/promotionRoute.js';
 import ShippingRoute from './routes/shippingRoute.js';
+import ShopRoute from './routes/shopRoute.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
@@ -24,5 +25,6 @@ sequelize
 app.use(apiGroupPrefix, UserRoute);
 app.use(apiGroupPrefix, PromotionRoute);
 app.use(apiGroupPrefix, ShippingRoute);
+app.use(apiGroupPrefix, ShopRoute);
 
 export { app };

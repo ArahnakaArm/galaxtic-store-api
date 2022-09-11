@@ -5,7 +5,7 @@ import {
     postMonthlyPromotion,
     deleteMonthlyPromotion,
 } from '../controllers/promotionController.js';
-import { auth, adminRoleValidate, userRoleValidate } from '../services/middleware/auth.js';
+import { auth, userRoleValidate } from '../services/middleware/auth.js';
 import { postMonthlyPromotionValidate } from '../services/validate/promotionValidator.js';
 import path from '../utils/enum/path.js';
 const PromotionRoute = express.Router();
