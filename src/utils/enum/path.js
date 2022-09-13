@@ -22,6 +22,9 @@ const path = {
         UPDATE_SHOP: '/shop/:shopId',
         DELETE_SHOP: '/shop/:shopId',
     },
+    CATEGORY: {
+        MAIN_CATEGORY: '/main-category',
+    },
 };
 
 export default Object.freeze(path);

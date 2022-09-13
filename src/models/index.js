@@ -8,6 +8,8 @@ import {
     MonthlyPromotionSchema,
     MonthlyPromotionContentSchema,
     ShopSchema,
+    MainCategorySchema,
+    SubCategorySchema,
 } from './schema.js';
 const cCA = fs.readFileSync('./certs/ca-certificate.crt', 'utf8');
 const sequelize = new Sequelize(postgres.dbName, postgres.options.user, postgres.options.pass, {
@@ -53,6 +55,9 @@ const MonthlyPromotionContent = sequelize.define(
     commonModelOptions,
 );
 
+const MainCategory = sequelize.define('main_categories', MainCategorySchema, commonModelOptions);
+const SubCategory = sequelize.define('sub_categories', SubCategorySchema, commonModelOptions);
+
 User.hasOne(UserInfo, {
     onDelete: 'CASCADE',
     foreignKey: 'user_id',
@@ -80,4 +85,20 @@ MonthlyPromotion.hasMany(MonthlyPromotionContent, {
     foreignKey: 'monthly_promotion_id',
 });
 
-export { User, UserInfo, ShippingInfo, Shop, MonthlyPromotion, MonthlyPromotionContent, sequelize };
+MainCategory.hasMany(SubCategory, {
+    onDelete: 'CASCADE',
+    hooks: true,
+    foreignKey: 'main_category_id',
+});
+
+export {
+    User,
+    UserInfo,
+    ShippingInfo,
+    Shop,
+    MonthlyPromotion,
+    MonthlyPromotionContent,
+    MainCategory,
+    SubCategory,
+    sequelize,
+};

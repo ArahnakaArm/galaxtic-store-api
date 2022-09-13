@@ -203,6 +203,65 @@ const MonthlyPromotionContentSchema = {
     },
 };
 
+const MainCategorySchema = {
+    main_category_id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    main_category_name: {
+        type: DataTypes.STRING,
+    },
+    main_category_image_url: {
+        type: DataTypes.STRING,
+    },
+    is_active: {
+        type: DataTypes.BOOLEAN,
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: NOW,
+    },
+    updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: NOW,
+    },
+    deleted_at: {
+        type: DataTypes.DATE,
+        defaultValue: null,
+    },
+};
+
+const SubCategorySchema = {
+    sub_category_id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    main_category_id: {
+        type: DataTypes.STRING,
+    },
+    sub_category_name: {
+        type: DataTypes.STRING,
+    },
+    sub_category_image_url: {
+        type: DataTypes.STRING,
+    },
+    is_active: {
+        type: DataTypes.BOOLEAN,
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: NOW,
+    },
+    updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: NOW,
+    },
+    deleted_at: {
+        type: DataTypes.DATE,
+        defaultValue: null,
+    },
+};
+
 export {
     UserSchema,
     ShopSchema,
@@ -210,4 +269,6 @@ export {
     UserInfoSchema,
     MonthlyPromotionSchema,
     MonthlyPromotionContentSchema,
+    MainCategorySchema,
+    SubCategorySchema,
 };

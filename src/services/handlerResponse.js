@@ -12,12 +12,13 @@ const {
     EMAIL_NOT_VERIFY,
 } = status;
 
-const returnSuccess = (res, payload = null) => {
+const returnSuccess = (res, payload = null, count = null) => {
     const resMess = {
         resultCode: SUCCESS.RESULT_CODE,
         developerMessage: SUCCESS.DEVELOPER_MESSAGE,
     };
     if (payload) resMess.resultData = payload;
+    if (count) resMess.rowCount = count;
     return res.status(Number(SUCCESS.RESULT_CODE.substring(0, 3))).send(resMess);
 };
 
