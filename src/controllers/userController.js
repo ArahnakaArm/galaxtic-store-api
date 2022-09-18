@@ -20,6 +20,8 @@ import jwt from 'jsonwebtoken';
 import configApp from '../../conf/config-app.js';
 import { sendEmail, sendEmailChangePass } from '../services/sendEmail.js';
 import dbStatus from '../utils/enum/dbStatus.js';
+import { logger } from '../initLogging.js';
+
 const { JWT_EXPIRE, JWT_SECRET } = configApp;
 
 const getUsers = async (req, res) => {

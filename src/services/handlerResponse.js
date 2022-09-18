@@ -1,5 +1,6 @@
 import status from '../utils/enum/status.js';
-
+import { infoLogs } from '../services/logging.js';
+import LOG_SERVICES from '../utils/enum/logs.js';
 const {
     SUCCESS,
     CREATED,
@@ -19,6 +20,7 @@ const returnSuccess = (res, payload = null, count = null) => {
     };
     if (payload) resMess.resultData = payload;
     if (count) resMess.rowCount = count;
+    infoLogs(res.req.originalUrl, `${LOG_SERVICES.MESSAGE_OUTGOING}${LOG_SERVICES.OUTGOING_STATUS.SUCCESS}`, resMess);
     return res.status(Number(SUCCESS.RESULT_CODE.substring(0, 3))).send(resMess);
 };
 
@@ -28,6 +30,7 @@ const returnCreated = (res, payload = null) => {
         developerMessage: CREATED.DEVELOPER_MESSAGE,
     };
     if (payload) resMess.resultData = payload;
+    infoLogs(res.req.originalUrl, `${LOG_SERVICES.MESSAGE_OUTGOING}${LOG_SERVICES.OUTGOING_STATUS.CREATED}`, resMess);
     return res.status(Number(CREATED.RESULT_CODE.substring(0, 3))).send(resMess);
 };
 
@@ -37,6 +40,11 @@ const returnSystemError = (res, payload = null) => {
         developerMessage: SYSTEM_ERROR.DEVELOPER_MESSAGE,
     };
     if (payload) resMess.resultData = payload;
+    infoLogs(
+        res.req.originalUrl,
+        `${LOG_SERVICES.MESSAGE_OUTGOING}${LOG_SERVICES.OUTGOING_STATUS.SYSTEM_ERROR}`,
+        resMess,
+    );
     return res.status(Number(SYSTEM_ERROR.RESULT_CODE.substring(0, 3))).send(resMess);
 };
 
@@ -46,6 +54,7 @@ const returnConflict = (res, payload = null) => {
         developerMessage: CONFLICT.DEVELOPER_MESSAGE,
     };
     if (payload) resMess.resultData = payload;
+    infoLogs(res.req.originalUrl, `${LOG_SERVICES.MESSAGE_OUTGOING}${LOG_SERVICES.OUTGOING_STATUS.CONFLICT}`, resMess);
     return res.status(Number(CONFLICT.RESULT_CODE.substring(0, 3))).send(resMess);
 };
 
@@ -55,6 +64,7 @@ const returnNotfound = (res, payload = null) => {
         developerMessage: NOTFOUND.DEVELOPER_MESSAGE,
     };
     if (payload) resMess.resultData = payload;
+    infoLogs(res.req.originalUrl, `${LOG_SERVICES.MESSAGE_OUTGOING}${LOG_SERVICES.OUTGOING_STATUS.NOT_FOUND}`, resMess);
     return res.status(Number(NOTFOUND.RESULT_CODE.substring(0, 3))).send(resMess);
 };
 
@@ -64,6 +74,11 @@ const returnWrongPass = (res, payload = null) => {
         developerMessage: WRONG_PASSWORD.DEVELOPER_MESSAGE,
     };
     if (payload) resMess.resultData = payload;
+    infoLogs(
+        res.req.originalUrl,
+        `${LOG_SERVICES.MESSAGE_OUTGOING}${LOG_SERVICES.OUTGOING_STATUS.WRONG_PASSWORD}`,
+        resMess,
+    );
     return res.status(Number(WRONG_PASSWORD.RESULT_CODE.substring(0, 3))).send(resMess);
 };
 
@@ -73,6 +88,11 @@ const returnUnauthorized = (res, payload = null) => {
         developerMessage: UNAUTHORIZED.DEVELOPER_MESSAGE,
     };
     if (payload) resMess.resultData = payload;
+    infoLogs(
+        res.req.originalUrl,
+        `${LOG_SERVICES.MESSAGE_OUTGOING}${LOG_SERVICES.OUTGOING_STATUS.UNAUTHORIZED}`,
+        resMess,
+    );
     return res.status(Number(UNAUTHORIZED.RESULT_CODE.substring(0, 3))).send(resMess);
 };
 

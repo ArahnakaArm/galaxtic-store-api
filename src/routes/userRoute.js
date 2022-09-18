@@ -11,6 +11,7 @@ import {
     updateProfile,
 } from '../controllers/userController.js';
 import { auth, adminRoleValidate, userRoleValidate } from '../services/middleware/auth.js';
+import incommingLog from '../services/middleware/incommingLog.js';
 import {
     registerValidate,
     loginValidate,
@@ -23,17 +24,17 @@ const UserRoute = express.Router();
 
 const { USER } = path;
 
-UserRoute.get(USER.GET_USER, [auth], getUsers);
-UserRoute.post(USER.REGISTER, [registerValidate], register);
-UserRoute.post(USER.LOGIN, [loginValidate], login);
-UserRoute.post(USER.VERIFY_EMAIL, [verifyEmailValidate], verifyEmail);
-UserRoute.get(USER.PROFILE, [auth, userRoleValidate], profile);
-UserRoute.post(USER.FORGOT_PASSWORD, [forgotPasswordValidate], forgotPassword);
+UserRoute.get(USER.GET_USER, [incommingLog, auth], getUsers);
+UserRoute.post(USER.REGISTER, [incommingLog, registerValidate], register);
+UserRoute.post(USER.LOGIN, [incommingLog, loginValidate], login);
+UserRoute.post(USER.VERIFY_EMAIL, [incommingLog, verifyEmailValidate], verifyEmail);
+UserRoute.get(USER.PROFILE, [incommingLog, auth, userRoleValidate], profile);
+UserRoute.post(USER.FORGOT_PASSWORD, [incommingLog, forgotPasswordValidate], forgotPassword);
 UserRoute.patch(
     USER.CHANGE_PASSWORD_WITH_VERIFYCODE,
-    [changePasswordWithVerifyCodeValidate],
+    [incommingLog, changePasswordWithVerifyCodeValidate],
     changePasswordWithVerifyCode,
 );
-UserRoute.post(USER.PROFILE, [auth, userRoleValidate], createProfile);
-UserRoute.patch(USER.PROFILE, [auth, userRoleValidate], updateProfile);
+UserRoute.post(USER.PROFILE, [incommingLog, auth, userRoleValidate], createProfile);
+UserRoute.patch(USER.PROFILE, [incommingLog, auth, userRoleValidate], updateProfile);
 export default UserRoute;

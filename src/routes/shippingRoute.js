@@ -9,6 +9,7 @@ import {
 } from '../controllers/shippingController.js';
 import { auth, adminRoleValidate, userRoleValidate } from '../services/middleware/auth.js';
 import { postShippingInfoByMeValidate } from '../services/validate/shippingValidator.js';
+import incommingLog from '../services/middleware/incommingLog.js';
 
 const ShippingRoute = express.Router();
 
@@ -16,22 +17,30 @@ const { SHIPPING } = path;
 
 const prefix = '/shipping';
 
-ShippingRoute.get(prefix + SHIPPING.SHIPPING_INFO, [auth, userRoleValidate], getShippingInfoByMe);
+ShippingRoute.get(prefix + SHIPPING.SHIPPING_INFO, [incommingLog, auth, userRoleValidate], getShippingInfoByMe);
 
 ShippingRoute.post(
     prefix + SHIPPING.SHIPPING_INFO,
-    [auth, userRoleValidate, postShippingInfoByMeValidate],
+    [incommingLog, auth, userRoleValidate, postShippingInfoByMeValidate],
     postShippingInfoByMe,
 );
 
 ShippingRoute.put(
     prefix + SHIPPING.SHIPPING_INFO_UPDATE,
-    [auth, userRoleValidate, postShippingInfoByMeValidate],
+    [incommingLog, auth, userRoleValidate, postShippingInfoByMeValidate],
     putShippingInfoByMe,
 );
 
-ShippingRoute.patch(prefix + SHIPPING.SHIPPING_INFO_UPDATE, [auth, userRoleValidate], patchShippingInfoByMe);
+ShippingRoute.patch(
+    prefix + SHIPPING.SHIPPING_INFO_UPDATE,
+    [incommingLog, auth, userRoleValidate],
+    patchShippingInfoByMe,
+);
 
-ShippingRoute.delete(prefix + SHIPPING.SHIPPING_INFO_UPDATE, [auth, userRoleValidate], deleteShippingInfoByMe);
+ShippingRoute.delete(
+    prefix + SHIPPING.SHIPPING_INFO_UPDATE,
+    [incommingLog, auth, userRoleValidate],
+    deleteShippingInfoByMe,
+);
 
 export default ShippingRoute;

@@ -28,4 +28,16 @@ const generateRandomString = (digit) => {
     return randomString;
 };
 
-export { generateUuid, hashPassword, matchPassword, generateRandomString };
+const checkValidJson = (json) => {
+    console.log(json);
+    var isValidJSON = true;
+    try {
+        JSON.parse(json);
+    } catch {
+        isValidJSON = false;
+    }
+
+    return isValidJSON;
+};
+
+export { generateUuid, hashPassword, matchPassword, generateRandomString, checkValidJson };
