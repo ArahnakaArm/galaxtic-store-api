@@ -1,4 +1,5 @@
 import { logger } from '../initLogging.js';
+import LOG_SERVICES from '../utils/enum/logs.js';
 
 const incommingInfoLogs = (service, message, req) => {
     try {
@@ -47,6 +48,27 @@ const systemInfoLogs = (service, message) => {
     });
 };
 
+const verboseLogs = (service, cmd, status, message) => {
+    logger.log({
+        level: 'verbose',
+        message: message,
+        service: service,
+        cmd: cmd,
+        status: status,
+    });
+};
+
+const verboseDBLogs = (cmd, status, info) => {
+    const message = `${cmd}_${LOG_SERVICES.DB.MESSAGE[info]}`;
+    logger.log({
+        level: 'verbose',
+        message: message,
+        service: 'DATABASE',
+        cmd: cmd,
+        status: status,
+    });
+};
+
 const systemErrorLogs = (service, message) => {
     logger.log({
         level: 'error',
@@ -55,4 +77,4 @@ const systemErrorLogs = (service, message) => {
     });
 };
 
-export { incommingInfoLogs, infoLogs, systemInfoLogs, systemErrorLogs };
+export { incommingInfoLogs, infoLogs, systemInfoLogs, verboseLogs, verboseDBLogs, systemErrorLogs };

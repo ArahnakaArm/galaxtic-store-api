@@ -12,21 +12,26 @@ import { generateUuid, matchPassword } from '../basicFunc.js';
 import jwt from 'jsonwebtoken';
 import configApp from '../../../conf/config-app.js';
 const { JWT_EXPIRE, JWT_SECRET } = configApp;
+import { verboseDBLogs } from '../logging.js';
+import LOG_SERVICES from '../../utils/enum/logs.js';
 
 const regisUser = async (payload = null) => {
     try {
         const user = await User.create(payload);
-        return user;
+        verboseDBLogs(LOG_SERVICES.DB.CMD.CREATE_USER, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+        return dbSuccess(user);
     } catch (e) {
-        return null;
+        return dbSysError();
     }
 };
 
 const getAllUser = async () => {
     try {
         const users = await User.findAll({ where: { deleted_at: null } });
+        verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
         return dbSuccess(users);
     } catch (e) {
+        verboseDBLogs(LOG_SERVICES.DB.CMD.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, 'ERROR');
         return dbSysError();
     }
 };
@@ -35,9 +40,19 @@ const loginUser = async (payload = null) => {
     try {
         const user = await User.findOne({ where: { email: payload.email } });
 
-        if (!user) return dbNotFound();
+        if (!user) {
+            verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.FAILED, 'NOT_FOUND');
+            return dbNotFound();
+        }
 
-        if (!user.verify_at || user.verify_at === '') return dbEmailNotVerify();
+        verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+
+        if (!user.verify_at || user.verify_at === '') {
+            verboseDBLogs(LOG_SERVICES.DB.CMD.CHECK_USER_STATUS, LOG_SERVICES.DB.STATUS.FAILED, 'NOT_VERIFY');
+            return dbEmailNotVerify();
+        }
+
+        verboseDBLogs(LOG_SERVICES.DB.CMD.CHECK_USER_STATUS, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
 
         const password = payload.password;
 
@@ -55,7 +70,7 @@ const loginUser = async (payload = null) => {
 
         return dbSuccess({ token: token });
     } catch (e) {
-        console.log(e);
+        verboseDBLogs(LOG_SERVICES.DB.CMD.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, 'ERROR');
         return dbSysError();
     }
 };
@@ -71,9 +86,16 @@ const findUser = async (payload = null, additionalProp = null) => {
             attributes: itemAtts,
         });
 
-        if (!user) return dbNotFound();
+        if (!user) {
+            verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.FAILED, 'NOT_FOUND');
+            return dbNotFound();
+        }
+
+        verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+
         return dbSuccess(user);
     } catch (e) {
+        verboseDBLogs(LOG_SERVICES.DB.CMD.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, 'ERROR');
         return dbSysError();
     }
 };
@@ -81,38 +103,20 @@ const findUser = async (payload = null, additionalProp = null) => {
 const updateUser = async (findCondition, payload) => {
     try {
         let user = await User.findOne({ where: findCondition });
-        if (!user) return dbNotFound();
+        if (!user) {
+            verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.FAILED, 'NOT_FOUND');
+            return dbNotFound();
+        }
+        verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
         user.set(payload);
         await user.save();
+        verboseDBLogs(LOG_SERVICES.DB.CMD.UPDATE_USER, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
         user = user.toJSON();
         delete user.password;
         return dbSuccess(user);
     } catch (e) {
+        verboseDBLogs(LOG_SERVICES.DB.CMD.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, 'ERROR');
         return dbSysError();
-    }
-};
-
-const commonUpdate = async (obj, payload) => {
-    try {
-        const now = new Date();
-        const updateObj = { ...payload, updated_at: now };
-        obj.set(updateObj);
-        await obj.save();
-        return obj;
-    } catch (e) {
-        return null;
-    }
-};
-
-const commonPost = async (obj, payload) => {
-    try {
-        const postObj = await obj.create({
-            ...payload,
-        });
-
-        return postObj;
-    } catch (e) {
-        return null;
     }
 };
 
@@ -126,8 +130,11 @@ const createUserProfile = async (payload) => {
         });
 
         if (!user) {
+            verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.FAILED, 'NOT_FOUND');
             return dbNotFound();
         }
+
+        verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
 
         const userProfileCount = await UserInfo.count({
             where: {
@@ -135,6 +142,7 @@ const createUserProfile = async (payload) => {
             },
         });
         if (userProfileCount) {
+            verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER_INFO, LOG_SERVICES.DB.STATUS.FAILED, 'CONFLICT');
             return dbConflict();
         }
 
@@ -147,9 +155,12 @@ const createUserProfile = async (payload) => {
             last_name: user.last_name || '',
             email: user.email || '',
         });
+
+        verboseDBLogs(LOG_SERVICES.DB.CMD.CREATE_USER_INFO, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+
         return dbCreated(userProfile);
     } catch (e) {
-        console.log(e);
+        verboseDBLogs(LOG_SERVICES.DB.CMD.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, 'ERROR');
         return dbSysError();
     }
 };
@@ -163,26 +174,24 @@ const updateUserProfile = async (payload) => {
                 user_id: userId,
             },
         });
-        if (!userInfo) return dbNotFound();
+        if (!userInfo) {
+            verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER_INFO, LOG_SERVICES.DB.STATUS.FAILED, 'NOT_FOUND');
+            return dbNotFound();
+        }
+
+        verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER_INFO, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
 
         userInfo.set(payload);
 
         await userInfo.save();
 
+        verboseDBLogs(LOG_SERVICES.DB.CMD.UPDATE_USER_INFO, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+
         return dbSuccess(userInfo);
     } catch (e) {
+        verboseDBLogs(LOG_SERVICES.DB.CMD.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, 'ERROR');
         return dbSysError();
     }
 };
 
-export {
-    getAllUser,
-    regisUser,
-    loginUser,
-    findUser,
-    updateUser,
-    commonUpdate,
-    commonPost,
-    createUserProfile,
-    updateUserProfile,
-};
+export { getAllUser, regisUser, loginUser, findUser, updateUser, createUserProfile, updateUserProfile };
