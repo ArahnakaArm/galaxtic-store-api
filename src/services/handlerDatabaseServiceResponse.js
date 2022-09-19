@@ -38,4 +38,20 @@ const dbConflict = () => {
     return res;
 };
 
-export { dbCreated, dbSuccess, dbNotFound, dbSysError, dbConflict };
+const dbEmailNotVerify = () => {
+    const res = {
+        dbStatus: 'Not Verify',
+        data: null,
+    };
+    return res;
+};
+
+const dbWrongPass = () => {
+    const res = {
+        dbStatus: 'Wrong Password',
+        data: null,
+    };
+    return res;
+};
+
+export { dbCreated, dbSuccess, dbNotFound, dbSysError, dbConflict, dbEmailNotVerify, dbWrongPass };

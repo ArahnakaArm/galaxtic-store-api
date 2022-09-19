@@ -1,4 +1,3 @@
-import { User } from '../models/index.js';
 import {
     returnSuccess,
     returnCreated,
@@ -9,37 +8,36 @@ import {
     returnEmailNotVerify,
 } from '../services/handlerResponse.js';
 import {
+    getAllUser,
     regisUser,
+    loginUser,
     findUser,
-    commonUpdate,
+    updateUser,
     createUserProfile,
     updateUserProfile,
 } from '../services/databaseServices/userDatabaseService.js';
-import { generateUuid, hashPassword, matchPassword, generateRandomString } from '../services/basicFunc.js';
-import jwt from 'jsonwebtoken';
-import configApp from '../../conf/config-app.js';
+import { generateUuid, hashPassword, generateRandomString } from '../services/basicFunc.js';
 import { sendEmail, sendEmailChangePass } from '../services/sendEmail.js';
 import dbStatus from '../utils/enum/dbStatus.js';
-import { logger } from '../initLogging.js';
-
-const { JWT_EXPIRE, JWT_SECRET } = configApp;
 
 const getUsers = async (req, res) => {
-    try {
-        const users = await User.findAll();
-        return returnSuccess(res, users);
-    } catch (error) {
-        return returnSystemError(res);
+    const dbObj = await getAllUser();
+
+    switch (dbObj.dbStatus) {
+        case dbStatus.SYS_ERROR:
+            return returnSystemError(res);
     }
+
+    return returnSuccess(res, dbObj.data);
 };
 
 const register = async (req, res) => {
     try {
         const body = req.body;
         const userId = generateUuid();
-        const exitedUser = await findUser({ email: body.email, deleted_at: null });
+        const dbObjExitedUser = await findUser({ email: body.email, deleted_at: null });
 
-        if (exitedUser) return returnConflict(res);
+        if (dbObjExitedUser.data) return returnConflict(res);
 
         const hashedPassword = await hashPassword(body.password);
         const verifyCode = generateRandomString(16);
@@ -54,54 +52,61 @@ const register = async (req, res) => {
             verify_code: verifyCode,
         };
 
-        const user = await regisUser(userPayload);
+        const dbObj = await regisUser(userPayload);
+
+        switch (dbObj.dbStatus) {
+            case dbStatus.CONFLICT:
+                return returnConflict(res);
+            case dbStatus.SYS_ERROR:
+                return returnSystemError(res);
+        }
 
         sendEmail(body.email, verifyCode);
 
-        return returnCreated(res, user);
+        return returnCreated(res, dbObj.data);
     } catch (error) {
         return returnSystemError(res);
     }
 };
 
 const login = async (req, res) => {
-    try {
-        const body = req.body;
-        const user = await findUser({ email: body.email, deleted_at: null }, ['password', 'verify_at']);
+    const body = req.body;
+    const dbObj = await loginUser(body);
 
-        if (!user) return returnNotfound(res);
-
-        if (!user.verify_at || user.verify_at === '') return returnEmailNotVerify(res);
-
-        const password = body.password;
-
-        const match = await matchPassword(password, user.password);
-
-        if (!match) return returnWrongPass(res);
-
-        const token = jwt.sign(
-            {
-                user_id: user.user_id,
-            },
-            JWT_SECRET,
-            { expiresIn: JWT_EXPIRE },
-        );
-
-        return returnSuccess(res, { token: token });
-    } catch (error) {
-        return returnSystemError(res);
+    switch (dbObj.dbStatus) {
+        case dbStatus.NOT_FOUND:
+            return returnNotfound(res);
+        case dbStatus.CONFLICT:
+            return returnConflict(res);
+        case dbStatus.SYS_ERROR:
+            return returnSystemError(res);
+        case dbStatus.EMAIL_NOT_VERIFY:
+            return returnEmailNotVerify(res);
+        case dbStatus.WRONG_PASS:
+            return returnWrongPass(res);
     }
+
+    return returnSuccess(res, dbObj.data);
 };
 const profile = async (req, res) => {
     try {
         const body = req.body;
         const userId = body.user_id;
 
-        const user = await findUser({ user_id: userId, deleted_at: null });
+        const dbObj = await findUser({ user_id: userId, deleted_at: null });
 
-        if (!user) returnNotfound;
+        switch (dbObj.dbStatus) {
+            case dbStatus.NOT_FOUND:
+                return returnNotfound(res);
+            case dbStatus.SYS_ERROR:
+                return returnSystemError(res);
+            case dbStatus.EMAIL_NOT_VERIFY:
+                return returnEmailNotVerify(res);
+            case dbStatus.WRONG_PASS:
+                return returnWrongPass(res);
+        }
 
-        return returnSuccess(res, user);
+        return returnSuccess(res, dbObj.data);
     } catch (e) {
         return returnSystemError(res);
     }
@@ -110,23 +115,22 @@ const profile = async (req, res) => {
 const verifyEmail = async (req, res) => {
     try {
         const verifyCode = req.body.verify_code || '';
-
         if (verifyCode === '') return returnSystemError(res);
 
-        const user = await findUser({ verify_code: verifyCode });
-
-        if (!user) return returnNotfound(res);
-
         const now = new Date();
+        const dbObj = await updateUser(
+            { verify_code: verifyCode, deleted_at: null },
+            { updated_at: now, verify_at: now },
+        );
 
-        const updatedUser = await commonUpdate(user, {
-            updated_at: now,
-            verify_at: now,
-        });
+        switch (dbObj.dbStatus) {
+            case dbStatus.NOT_FOUND:
+                return returnNotfound(res);
+            case dbStatus.SYS_ERROR:
+                return returnSystemError(res);
+        }
 
-        if (!updatedUser) return returnSystemError(res);
-
-        return returnSuccess(res, updatedUser);
+        return returnSuccess(res, dbObj.data);
     } catch (e) {
         return returnSystemError(res);
     }
@@ -134,24 +138,24 @@ const verifyEmail = async (req, res) => {
 
 const forgotPassword = async (req, res) => {
     const { body } = req;
-    const user = await findUser({ email: body.email });
-
-    if (!user) return returnNotfound(res);
-
     const verifyCode = generateRandomString(16);
 
     const now = new Date();
+    const dbObj = await updateUser(
+        { email: body.email, deleted_at: null },
+        { updated_at: now, verify_code_password: verifyCode },
+    );
 
-    const updatedUser = await commonUpdate(user, {
-        updated_at: now,
-        verify_code_password: verifyCode,
-    });
-
-    if (!updatedUser) return returnSystemError(res);
+    switch (dbObj.dbStatus) {
+        case dbStatus.NOT_FOUND:
+            return returnNotfound(res);
+        case dbStatus.SYS_ERROR:
+            return returnSystemError(res);
+    }
 
     sendEmailChangePass(body.email, verifyCode);
 
-    return returnSuccess(res);
+    return returnSuccess(res, dbObj.data);
 };
 
 const changePasswordWithVerifyCode = async (req, res) => {
@@ -159,14 +163,22 @@ const changePasswordWithVerifyCode = async (req, res) => {
     const password = body.password;
     const verify_code_password = body.verify_code_password;
 
-    const user = await findUser({ verify_code_password: verify_code_password });
-    if (!user) return returnNotfound(res);
-
     const hashedPassword = await hashPassword(password);
-    const updatedUser = await commonUpdate(user, { password: hashedPassword });
-    if (!updatedUser) return returnSystemError(res);
 
-    return returnSuccess(res, updatedUser);
+    const now = new Date();
+    const dbObj = await updateUser(
+        { verify_code_password: verify_code_password, deleted_at: null },
+        { updated_at: now, password: hashedPassword },
+    );
+
+    switch (dbObj.dbStatus) {
+        case dbStatus.NOT_FOUND:
+            return returnNotfound(res);
+        case dbStatus.SYS_ERROR:
+            return returnSystemError(res);
+    }
+
+    return returnSuccess(res, dbObj.data);
 };
 
 const createProfile = async (req, res) => {

@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import configApp from '../../../conf/config-app.js';
+import { User } from '../../models/index.js';
 import { regisUser, findUser } from '../databaseServices/userDatabaseService.js';
 import { returnUnauthorized } from '../handlerResponse.js';
 const { JWT_EXPIRE, JWT_SECRET } = configApp;
@@ -11,7 +12,7 @@ const auth = async (req, res, next) => {
 
         const decoded = jwt.verify(token, JWT_SECRET);
 
-        const user = await findUser({ user_id: decoded.user_id, deleted_at: null });
+        const user = await User.findOne({ where: { user_id: decoded.user_id, deleted_at: null } });
         req.body.user_id = decoded.user_id;
         if (!user) return returnUnauthorized(res);
     } catch (err) {
@@ -27,7 +28,7 @@ const adminRoleValidate = async (req, res, next) => {
 
         const decoded = jwt.verify(token, JWT_SECRET);
 
-        const user = await findUser({ user_id: decoded.user_id, deleted_at: null });
+        const user = await User.findOne({ where: { user_id: decoded.user_id, deleted_at: null } });
         if (user.user_role !== 'ADMIN') return returnUnauthorized(res);
     } catch (err) {
         return returnUnauthorized(res);
@@ -43,7 +44,8 @@ const userRoleValidate = async (req, res, next) => {
 
         const decoded = jwt.verify(token, JWT_SECRET);
 
-        const user = await findUser({ user_id: decoded.user_id, deleted_at: null });
+        const user = await User.findOne({ where: { user_id: decoded.user_id, deleted_at: null } });
+
         if (user.user_role !== 'USER' && user.user_role !== 'ADMIN') return returnUnauthorized(res);
     } catch (err) {
         return returnUnauthorized(res);

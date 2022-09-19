@@ -102,6 +102,11 @@ const returnInvalid = (res, payload = null) => {
         developerMessage: MISSING_OR_INVALID_PARAMETER.DEVELOPER_MESSAGE,
     };
     if (payload) resMess.resultData = payload;
+    infoLogs(
+        res.req.originalUrl,
+        `${LOG_SERVICES.MESSAGE_OUTGOING}${LOG_SERVICES.OUTGOING_STATUS.MISSING_OR_INVALID}`,
+        resMess,
+    );
     return res.status(Number(MISSING_OR_INVALID_PARAMETER.RESULT_CODE.substring(0, 3))).send(resMess);
 };
 
@@ -111,6 +116,11 @@ const returnEmailNotVerify = (res, payload = null) => {
         developerMessage: EMAIL_NOT_VERIFY.DEVELOPER_MESSAGE,
     };
     if (payload) resMess.resultData = payload;
+    infoLogs(
+        res.req.originalUrl,
+        `${LOG_SERVICES.MESSAGE_OUTGOING}${LOG_SERVICES.OUTGOING_STATUS.EMAIL_NOT_VERIFY}`,
+        resMess,
+    );
     return res.status(Number(EMAIL_NOT_VERIFY.RESULT_CODE.substring(0, 3))).send(resMess);
 };
 

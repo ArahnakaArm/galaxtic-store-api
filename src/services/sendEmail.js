@@ -2,7 +2,6 @@ import nodemailer from 'nodemailer';
 import smtpTransport from 'nodemailer-smtp-transport';
 const { email } = typeof process.env.service === 'string' ? JSON.parse(process.env.service) : process.env.service;
 const sendEmail = async (to, verifyCode) => {
-    console.log(email.password);
     const transporter = nodemailer.createTransport(
         smtpTransport({
             service: 'gmail',

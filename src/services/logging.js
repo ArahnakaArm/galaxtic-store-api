@@ -12,6 +12,7 @@ const incommingInfoLogs = (service, message, req) => {
         body: req.body || null,
         method: req.method || null,
         headers: req.headers || null,
+        query: req.query || null,
     });
 };
 

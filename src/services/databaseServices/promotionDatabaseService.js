@@ -66,7 +66,6 @@ const createMonthlyPromotion = async (payload) => {
 
         return dbCreated(postMonthlyPromotion);
     } catch (e) {
-        console.log(e);
         await t.rollback();
         return dbSysError();
     }

@@ -189,6 +189,10 @@ const MonthlyPromotionContentSchema = {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    url: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     created_at: {
         type: DataTypes.DATE,
         defaultValue: NOW,

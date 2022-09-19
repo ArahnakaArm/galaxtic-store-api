@@ -1,6 +1,17 @@
 import { User, UserInfo, ShippingInfo, Shop, sequelize } from '../../models/index.js';
-import { dbConflict, dbCreated, dbNotFound, dbSuccess, dbSysError } from '../handlerDatabaseServiceResponse.js';
-import { generateUuid } from '../basicFunc.js';
+import {
+    dbConflict,
+    dbCreated,
+    dbNotFound,
+    dbSuccess,
+    dbSysError,
+    dbEmailNotVerify,
+    dbWrongPass,
+} from '../handlerDatabaseServiceResponse.js';
+import { generateUuid, matchPassword } from '../basicFunc.js';
+import jwt from 'jsonwebtoken';
+import configApp from '../../../conf/config-app.js';
+const { JWT_EXPIRE, JWT_SECRET } = configApp;
 
 const regisUser = async (payload = null) => {
     try {
@@ -8,6 +19,44 @@ const regisUser = async (payload = null) => {
         return user;
     } catch (e) {
         return null;
+    }
+};
+
+const getAllUser = async () => {
+    try {
+        const users = await User.findAll({ where: { deleted_at: null } });
+        return dbSuccess(users);
+    } catch (e) {
+        return dbSysError();
+    }
+};
+
+const loginUser = async (payload = null) => {
+    try {
+        const user = await User.findOne({ where: { email: payload.email } });
+
+        if (!user) return dbNotFound();
+
+        if (!user.verify_at || user.verify_at === '') return dbEmailNotVerify();
+
+        const password = payload.password;
+
+        const match = await matchPassword(password, user.password);
+
+        if (!match) return dbWrongPass();
+
+        const token = jwt.sign(
+            {
+                user_id: user.user_id,
+            },
+            JWT_SECRET,
+            { expiresIn: JWT_EXPIRE },
+        );
+
+        return dbSuccess({ token: token });
+    } catch (e) {
+        console.log(e);
+        return dbSysError();
     }
 };
 
@@ -21,10 +70,25 @@ const findUser = async (payload = null, additionalProp = null) => {
             where: payload,
             attributes: itemAtts,
         });
-        if (user) return user;
-        else return null;
+
+        if (!user) return dbNotFound();
+        return dbSuccess(user);
     } catch (e) {
-        return null;
+        return dbSysError();
+    }
+};
+
+const updateUser = async (findCondition, payload) => {
+    try {
+        let user = await User.findOne({ where: findCondition });
+        if (!user) return dbNotFound();
+        user.set(payload);
+        await user.save();
+        user = user.toJSON();
+        delete user.password;
+        return dbSuccess(user);
+    } catch (e) {
+        return dbSysError();
     }
 };
 
@@ -93,6 +157,7 @@ const createUserProfile = async (payload) => {
 const updateUserProfile = async (payload) => {
     try {
         const userId = payload.user_id;
+        delete payload.user_id;
         const userInfo = await UserInfo.findOne({
             where: {
                 user_id: userId,
@@ -100,13 +165,7 @@ const updateUserProfile = async (payload) => {
         });
         if (!userInfo) return dbNotFound();
 
-        userInfo.set({
-            first_name: payload.first_name || '',
-            last_name: payload.last_name || '',
-            tel_number: payload.tel_number || null,
-            address: payload.address || null,
-            profile_image: payload.profile_image ? payload.profile_image : null,
-        });
+        userInfo.set(payload);
 
         await userInfo.save();
 
@@ -116,4 +175,14 @@ const updateUserProfile = async (payload) => {
     }
 };
 
-export { regisUser, findUser, commonUpdate, commonPost, createUserProfile, updateUserProfile };
+export {
+    getAllUser,
+    regisUser,
+    loginUser,
+    findUser,
+    updateUser,
+    commonUpdate,
+    commonPost,
+    createUserProfile,
+    updateUserProfile,
+};
