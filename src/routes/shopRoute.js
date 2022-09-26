@@ -12,6 +12,6 @@ const { SHOP } = path;
 ShopRoute.get(SHOP.ADD_SHOP, [incommingLog, auth, userRoleValidate], getAllShop);
 ShopRoute.post(SHOP.ADD_SHOP, [incommingLog, auth, userRoleValidate, postShopBymeValidate], postShop);
 ShopRoute.patch(SHOP.UPDATE_SHOP, [incommingLog, auth, userRoleValidate], patchShop);
-ShopRoute.delete(SHOP.DELETE_SHOP, [incommingLog, userRoleValidate], deleteShop);
+ShopRoute.delete(SHOP.DELETE_SHOP, [incommingLog, auth, userRoleValidate], deleteShop);
 
 export default ShopRoute;

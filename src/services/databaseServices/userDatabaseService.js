@@ -18,9 +18,15 @@ import LOG_SERVICES from '../../utils/enum/logs.js';
 const regisUser = async (payload = null) => {
     try {
         const user = await User.create(payload);
-        verboseDBLogs(LOG_SERVICES.DB.CMD.CREATE_USER, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+        verboseDBLogs(
+            LOG_SERVICES.DB.CMD.USER.CREATE,
+            LOG_SERVICES.DB.STATUS.SUCCESS,
+            LOG_SERVICES.DB.MESSAGE.SUCCESS,
+            user.toJSON(),
+        );
         return dbSuccess(user);
     } catch (e) {
+        verboseDBLogs(LOG_SERVICES.DB.CMD.COMMON.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, LOG_SERVICES.DB.MESSAGE.ERROR);
         return dbSysError();
     }
 };
@@ -28,10 +34,17 @@ const regisUser = async (payload = null) => {
 const getAllUser = async () => {
     try {
         const users = await User.findAll({ where: { deleted_at: null } });
-        verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+        verboseDBLogs(
+            LOG_SERVICES.DB.CMD.USER.FIND,
+            LOG_SERVICES.DB.STATUS.SUCCESS,
+            LOG_SERVICES.DB.MESSAGE.SUCCESS,
+            users.map((item) => {
+                return item.toJSON();
+            }),
+        );
         return dbSuccess(users);
     } catch (e) {
-        verboseDBLogs(LOG_SERVICES.DB.CMD.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, 'ERROR');
+        verboseDBLogs(LOG_SERVICES.DB.CMD.COMMON.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, LOG_SERVICES.DB.MESSAGE.ERROR);
         return dbSysError();
     }
 };
@@ -41,18 +54,35 @@ const loginUser = async (payload = null) => {
         const user = await User.findOne({ where: { email: payload.email } });
 
         if (!user) {
-            verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.FAILED, 'NOT_FOUND');
+            verboseDBLogs(
+                LOG_SERVICES.DB.CMD.USER.FIND,
+                LOG_SERVICES.DB.STATUS.FAILED,
+                LOG_SERVICES.DB.MESSAGE.NOT_FOUND,
+            );
             return dbNotFound();
         }
 
-        verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+        verboseDBLogs(
+            LOG_SERVICES.DB.CMD.USER.FIND,
+            LOG_SERVICES.DB.STATUS.SUCCESS,
+            LOG_SERVICES.DB.MESSAGE.SUCCESS,
+            user.toJSON(),
+        );
 
         if (!user.verify_at || user.verify_at === '') {
-            verboseDBLogs(LOG_SERVICES.DB.CMD.CHECK_USER_STATUS, LOG_SERVICES.DB.STATUS.FAILED, 'NOT_VERIFY');
+            verboseDBLogs(
+                LOG_SERVICES.DB.CMD.USER.CHECK_STATUS,
+                LOG_SERVICES.DB.STATUS.FAILED,
+                LOG_SERVICES.DB.MESSAGE.NOT_VERIFY,
+            );
             return dbEmailNotVerify();
         }
 
-        verboseDBLogs(LOG_SERVICES.DB.CMD.CHECK_USER_STATUS, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+        verboseDBLogs(
+            LOG_SERVICES.DB.CMD.USER.CHECK_STATUS,
+            LOG_SERVICES.DB.STATUS.SUCCESS,
+            LOG_SERVICES.DB.MESSAGE.SUCCESS,
+        );
 
         const password = payload.password;
 
@@ -70,7 +100,7 @@ const loginUser = async (payload = null) => {
 
         return dbSuccess({ token: token });
     } catch (e) {
-        verboseDBLogs(LOG_SERVICES.DB.CMD.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, 'ERROR');
+        verboseDBLogs(LOG_SERVICES.DB.CMD.COMMON.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, LOG_SERVICES.DB.MESSAGE.ERROR);
         return dbSysError();
     }
 };
@@ -87,15 +117,24 @@ const findUser = async (payload = null, additionalProp = null) => {
         });
 
         if (!user) {
-            verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.FAILED, 'NOT_FOUND');
+            verboseDBLogs(
+                LOG_SERVICES.DB.CMD.USER.FIND,
+                LOG_SERVICES.DB.STATUS.FAILED,
+                LOG_SERVICES.DB.MESSAGE.NOT_FOUND,
+            );
             return dbNotFound();
         }
 
-        verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+        verboseDBLogs(
+            LOG_SERVICES.DB.CMD.USER.FIND,
+            LOG_SERVICES.DB.STATUS.SUCCESS,
+            LOG_SERVICES.DB.MESSAGE.SUCCESS,
+            user.toJSON(),
+        );
 
         return dbSuccess(user);
     } catch (e) {
-        verboseDBLogs(LOG_SERVICES.DB.CMD.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, 'ERROR');
+        verboseDBLogs(LOG_SERVICES.DB.CMD.COMMON.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, LOG_SERVICES.DB.MESSAGE.ERROR);
         return dbSysError();
     }
 };
@@ -104,18 +143,32 @@ const updateUser = async (findCondition, payload) => {
     try {
         let user = await User.findOne({ where: findCondition });
         if (!user) {
-            verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.FAILED, 'NOT_FOUND');
+            verboseDBLogs(
+                LOG_SERVICES.DB.CMD.USER.FIND,
+                LOG_SERVICES.DB.STATUS.FAILED,
+                LOG_SERVICES.DB.MESSAGE.NOT_FOUND,
+            );
             return dbNotFound();
         }
-        verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+        verboseDBLogs(
+            LOG_SERVICES.DB.CMD.USER.FIND,
+            LOG_SERVICES.DB.STATUS.SUCCESS,
+            LOG_SERVICES.DB.MESSAGE.SUCCESS,
+            user.toJSON(),
+        );
         user.set(payload);
         await user.save();
-        verboseDBLogs(LOG_SERVICES.DB.CMD.UPDATE_USER, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+        verboseDBLogs(
+            LOG_SERVICES.DB.CMD.USER.UPDATE,
+            LOG_SERVICES.DB.STATUS.SUCCESS,
+            LOG_SERVICES.DB.MESSAGE.SUCCESS,
+            user.toJSON(),
+        );
         user = user.toJSON();
         delete user.password;
         return dbSuccess(user);
     } catch (e) {
-        verboseDBLogs(LOG_SERVICES.DB.CMD.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, 'ERROR');
+        verboseDBLogs(LOG_SERVICES.DB.CMD.COMMON.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, LOG_SERVICES.DB.MESSAGE.ERROR);
         return dbSysError();
     }
 };
@@ -130,11 +183,20 @@ const createUserProfile = async (payload) => {
         });
 
         if (!user) {
-            verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.FAILED, 'NOT_FOUND');
+            verboseDBLogs(
+                LOG_SERVICES.DB.CMD.USER.FIND,
+                LOG_SERVICES.DB.STATUS.FAILED,
+                LOG_SERVICES.DB.MESSAGE.NOT_FOUND,
+            );
             return dbNotFound();
         }
 
-        verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+        verboseDBLogs(
+            LOG_SERVICES.DB.CMD.USER.FIND,
+            LOG_SERVICES.DB.STATUS.SUCCESS,
+            LOG_SERVICES.DB.MESSAGE.SUCCESS,
+            user.toJSON(),
+        );
 
         const userProfileCount = await UserInfo.count({
             where: {
@@ -142,7 +204,11 @@ const createUserProfile = async (payload) => {
             },
         });
         if (userProfileCount) {
-            verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER_INFO, LOG_SERVICES.DB.STATUS.FAILED, 'CONFLICT');
+            verboseDBLogs(
+                LOG_SERVICES.DB.CMD.USER_INFO.FIND,
+                LOG_SERVICES.DB.STATUS.FAILED,
+                LOG_SERVICES.DB.MESSAGE.CONFLICT,
+            );
             return dbConflict();
         }
 
@@ -156,11 +222,16 @@ const createUserProfile = async (payload) => {
             email: user.email || '',
         });
 
-        verboseDBLogs(LOG_SERVICES.DB.CMD.CREATE_USER_INFO, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+        verboseDBLogs(
+            LOG_SERVICES.DB.CMD.USER_INFO.CREATE,
+            LOG_SERVICES.DB.STATUS.SUCCESS,
+            LOG_SERVICES.DB.MESSAGE.SUCCESS,
+            userProfile.toJSON(),
+        );
 
         return dbCreated(userProfile);
     } catch (e) {
-        verboseDBLogs(LOG_SERVICES.DB.CMD.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, 'ERROR');
+        verboseDBLogs(LOG_SERVICES.DB.CMD.COMMON.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, LOG_SERVICES.DB.MESSAGE.ERROR);
         return dbSysError();
     }
 };
@@ -175,21 +246,35 @@ const updateUserProfile = async (payload) => {
             },
         });
         if (!userInfo) {
-            verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER_INFO, LOG_SERVICES.DB.STATUS.FAILED, 'NOT_FOUND');
+            verboseDBLogs(
+                LOG_SERVICES.DB.CMD.USER_INFO.FIND,
+                LOG_SERVICES.DB.STATUS.FAILED,
+                LOG_SERVICES.DB.MESSAGE.NOT_FOUND,
+            );
             return dbNotFound();
         }
 
-        verboseDBLogs(LOG_SERVICES.DB.CMD.FIND_USER_INFO, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+        verboseDBLogs(
+            LOG_SERVICES.DB.CMD.USER_INFO.FIND,
+            LOG_SERVICES.DB.STATUS.SUCCESS,
+            LOG_SERVICES.DB.MESSAGE.SUCCESS,
+            userInfo.toJSON(),
+        );
 
         userInfo.set(payload);
 
         await userInfo.save();
 
-        verboseDBLogs(LOG_SERVICES.DB.CMD.UPDATE_USER_INFO, LOG_SERVICES.DB.STATUS.SUCCESS, 'SUCCESS');
+        verboseDBLogs(
+            LOG_SERVICES.DB.CMD.USER_INFO.UPDATE,
+            LOG_SERVICES.DB.STATUS.SUCCESS,
+            LOG_SERVICES.DB.MESSAGE.SUCCESS,
+            userInfo.toJSON(),
+        );
 
         return dbSuccess(userInfo);
     } catch (e) {
-        verboseDBLogs(LOG_SERVICES.DB.CMD.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, 'ERROR');
+        verboseDBLogs(LOG_SERVICES.DB.CMD.COMMON.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, LOG_SERVICES.DB.MESSAGE.ERROR);
         return dbSysError();
     }
 };

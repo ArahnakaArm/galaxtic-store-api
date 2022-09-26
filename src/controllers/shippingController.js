@@ -93,7 +93,7 @@ const deleteShippingInfoByMe = async (req, res) => {
     const shippingInfoId = req.params.shippingInfoId || '';
     const userId = body.user_id;
 
-    const dbObj = await removeShippingInfoByme(shippingInfoId, userId, body);
+    const dbObj = await removeShippingInfoByme(userId, shippingInfoId);
 
     switch (dbObj.dbStatus) {
         case dbStatus.NOT_FOUND:

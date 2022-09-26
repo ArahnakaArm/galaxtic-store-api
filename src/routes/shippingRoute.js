@@ -2,6 +2,7 @@ import express from 'express';
 import path from '../utils/enum/path.js';
 import {
     getShippingInfoByMe,
+    getByIdShippingInfoByMe,
     postShippingInfoByMe,
     putShippingInfoByMe,
     patchShippingInfoByMe,
@@ -18,6 +19,12 @@ const { SHIPPING } = path;
 const prefix = '/shipping';
 
 ShippingRoute.get(prefix + SHIPPING.SHIPPING_INFO, [incommingLog, auth, userRoleValidate], getShippingInfoByMe);
+
+ShippingRoute.get(
+    prefix + SHIPPING.SHIPPING_INFO_BY_ID,
+    [incommingLog, auth, userRoleValidate],
+    getByIdShippingInfoByMe,
+);
 
 ShippingRoute.post(
     prefix + SHIPPING.SHIPPING_INFO,

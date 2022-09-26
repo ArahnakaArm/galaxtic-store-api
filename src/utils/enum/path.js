@@ -15,6 +15,7 @@ const path = {
     },
     SHIPPING: {
         SHIPPING_INFO: '/shipping-info',
+        SHIPPING_INFO_BY_ID: '/shipping-info/:shippingInfoId',
         SHIPPING_INFO_UPDATE: '/shipping-info/:shippingInfoId',
     },
     SHOP: {

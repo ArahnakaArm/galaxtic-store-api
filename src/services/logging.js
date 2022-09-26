@@ -58,14 +58,15 @@ const verboseLogs = (service, cmd, status, message) => {
     });
 };
 
-const verboseDBLogs = (cmd, status, info) => {
-    const message = `${cmd}_${LOG_SERVICES.DB.MESSAGE[info]}`;
+const verboseDBLogs = (cmd, status, info, data = null) => {
+    const message = `${cmd}_${info}`;
     logger.log({
         level: 'verbose',
         message: message,
         service: 'DATABASE',
         cmd: cmd,
         status: status,
+        data: data,
     });
 };
 
