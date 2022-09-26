@@ -203,6 +203,13 @@ const createUserProfile = async (payload) => {
                 user_id: userId,
             },
         });
+
+        verboseDBLogs(
+            LOG_SERVICES.DB.CMD.USER_INFO.FIND,
+            LOG_SERVICES.DB.STATUS.SUCCESS,
+            LOG_SERVICES.DB.MESSAGE.SUCCESS,
+        );
+
         if (userProfileCount) {
             verboseDBLogs(
                 LOG_SERVICES.DB.CMD.USER_INFO.FIND,

@@ -17,6 +17,9 @@ const LOG_SERVICES = {
             },
             MAIN_CATEGORY: {
                 FIND: 'FIND_MAIN_CATEGORY',
+                CREATE: 'CREATE_MAIN_CATEGORY',
+                UPDATE: 'UPDATE_MAIN_CATEGORY',
+                DELETE: 'DELETE_MAIN_CATEGORY',
             },
             MONTHLY_PROMOTION: {
                 FIND: 'FIND_MONTHLY_PROMOTION',

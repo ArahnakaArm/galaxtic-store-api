@@ -40,4 +40,13 @@ const checkValidJson = (json) => {
     return isValidJSON;
 };
 
-export { generateUuid, hashPassword, matchPassword, generateRandomString, checkValidJson };
+const manageCommonQuery = (query) => {
+    let options = {};
+    options.offset = query.offset ? query.offset : 0;
+    options.search = query.search ? query.search : null;
+    if (query.limit) options.limit = query.limit;
+    if (query.is_active) options.isActive = query.is_active;
+    return options;
+};
+
+export { generateUuid, hashPassword, matchPassword, generateRandomString, checkValidJson, manageCommonQuery };

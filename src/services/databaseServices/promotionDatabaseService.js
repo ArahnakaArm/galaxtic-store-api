@@ -42,6 +42,12 @@ const getMonthlyPromotionById = async (id) => {
             },
         });
 
+        verboseDBLogs(
+            LOG_SERVICES.DB.CMD.MONTHLY_PROMOTION.FIND,
+            LOG_SERVICES.DB.STATUS.SUCCESS,
+            LOG_SERVICES.DB.MESSAGE.SUCCESS,
+        );
+
         if (!monthlyPromotions) {
             verboseDBLogs(
                 LOG_SERVICES.DB.CMD.MONTHLY_PROMOTION.FIND,

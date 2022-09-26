@@ -25,6 +25,9 @@ const path = {
     },
     CATEGORY: {
         MAIN_CATEGORY: '/main-category',
+        MAIN_CATEGORY_BY_ID: '/main-category/:mainCategoryId',
+        UPDATE_CATEGORY: '/main-category/:mainCategoryId',
+        DELETE_CATEGORY: '/main-category/:mainCategoryId',
     },
 };
 
