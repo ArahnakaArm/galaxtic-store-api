@@ -27,6 +27,7 @@ const registerValidate = (req, res, next) => {
             password: {
                 emptyChecker: true,
                 type: 'string',
+                pattern: '(?=^.{8,}$)(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^A-Za-z0-9]).*',
             },
             user_role: {
                 emptyChecker: true,
@@ -46,6 +47,7 @@ const registerValidate = (req, res, next) => {
     if (validateBody) {
         next();
     } else {
+        console.log(ajv.errorsText());
         returnInvalid(res);
     }
 };

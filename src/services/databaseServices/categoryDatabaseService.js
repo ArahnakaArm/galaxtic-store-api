@@ -103,8 +103,9 @@ const createMainCategory = async (payload) => {
             LOG_SERVICES.DB.MESSAGE.SUCCESS,
             mainCate.toJSON(),
         );
-        return dbCreated();
+        return dbCreated(mainCate);
     } catch (e) {
+        console.log(e);
         verboseDBLogs(LOG_SERVICES.DB.CMD.COMMON.SYSTEM, LOG_SERVICES.DB.STATUS.FAILED, LOG_SERVICES.DB.MESSAGE.ERROR);
         return dbSysError();
     }
