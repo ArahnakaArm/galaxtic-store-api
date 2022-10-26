@@ -38,6 +38,18 @@ const LOG_SERVICES = {
                 UPDATE: 'UPDATE_SHOP',
                 DELETE: 'DELETE_SHOP',
             },
+            PRODUCT: {
+                FIND: 'FIND_PRODUCT',
+                CREATE: 'CREATE_PRODUCT',
+                UPDATE: 'UPDATE_PRODUCT',
+                DELETE: 'DELETE_PRODUCT',
+            },
+            USER_SHOP: {
+                FIND: 'FIND_USER_SHOP',
+                CREATE: 'CREATE_USER_SHOP',
+                UPDATE: 'UPDATE_USER_SHOP',
+                DELETE: 'DELETE_USER_SHOP',
+            },
             COMMON: {
                 SYSTEM: 'SYSTEM',
             },

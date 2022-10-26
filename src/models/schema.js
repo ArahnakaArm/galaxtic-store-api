@@ -266,6 +266,52 @@ const SubCategorySchema = {
     },
 };
 
+const ProductSchema = {
+    product_id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+    },
+    shop_id: {
+        type: DataTypes.STRING,
+    },
+    main_category_id: {
+        type: DataTypes.STRING,
+    },
+    product_sku: {
+        type: DataTypes.STRING,
+    },
+    product_name: {
+        type: DataTypes.STRING,
+    },
+    product_img: {
+        type: DataTypes.STRING,
+    },
+    is_active: {
+        type: DataTypes.BOOLEAN,
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: NOW,
+    },
+    updated_at: {
+        type: DataTypes.DATE,
+        defaultValue: NOW,
+    },
+    deleted_at: {
+        type: DataTypes.DATE,
+        defaultValue: null,
+    },
+};
+
+const UserShopSchema = {
+    user_id: {
+        type: DataTypes.STRING,
+    },
+    shop_id: {
+        type: DataTypes.STRING,
+    },
+};
+
 export {
     UserSchema,
     ShopSchema,
@@ -275,4 +321,6 @@ export {
     MonthlyPromotionContentSchema,
     MainCategorySchema,
     SubCategorySchema,
+    ProductSchema,
+    UserShopSchema,
 };

@@ -6,6 +6,7 @@ import PromotionRoute from './routes/promotionRoute.js';
 import ShippingRoute from './routes/shippingRoute.js';
 import ShopRoute from './routes/shopRoute.js';
 import CategoryRoute from './routes/categoryRoute.js';
+import ProductRoute from './routes/productRoute.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { systemInfoLogs, systemErrorLogs } from './services/logging.js';
@@ -34,5 +35,6 @@ app.use(apiGroupPrefix, PromotionRoute);
 app.use(apiGroupPrefix, ShippingRoute);
 app.use(apiGroupPrefix, ShopRoute);
 app.use(apiGroupPrefix, CategoryRoute);
+app.use(apiGroupPrefix, ProductRoute);
 
 export { app };

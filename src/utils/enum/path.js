@@ -29,6 +29,10 @@ const path = {
         UPDATE_CATEGORY: '/main-category/:mainCategoryId',
         DELETE_CATEGORY: '/main-category/:mainCategoryId',
     },
+    PRODUCT: {
+        PRODUCT: '/product',
+        PRODUCT_BY_ID: '/product/:productId',
+    },
 };
 
 export default Object.freeze(path);
