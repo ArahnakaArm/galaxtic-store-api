@@ -24,7 +24,7 @@ const findMainCategorie = async (options) => {
         });
 
         const categoriesCount = await MainCategory.count({ where: searchCondition });
-        //ddsa
+        //eie
         verboseDBLogs(
             LOG_SERVICES.DB.CMD.MAIN_CATEGORY.FIND,
             LOG_SERVICES.DB.STATUS.SUCCESS,
